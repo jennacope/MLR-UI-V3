@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MLR Pre-Screen – Results</title>
+  <style>
+    :root {
+      --green: #2ecc71;
+      --amber: #f1c40f;
+      --red: #e74c3c;
+    }
+    body { font-family: Arial, sans-serif; margin: 0; background: #f9f9f9; color: #333; }
+    header { background: #004080; color: white; padding: 1rem; font-size: 1.2rem; }
+    main { padding: 1.5rem; max-width: 900px; margin: auto; }
+    .donut { width: 120px; height: 120px; border-radius: 50%; background: conic-gradient(var(--color) calc(var(--val)*1%), #ddd 0); display:flex; align-items:center; justify-content:center; font-size:1.5rem; font-weight:bold; margin:auto; }
+    .score { text-align:center; margin:1rem 0; }
+    .flag { margin:.5rem 0; padding:.5rem; border-radius:6px; }
+    .flag.red { background:#fdd; }
+    .flag.amber { background:#ffd; }
+    .badge { background:#333; color:white; padding:2px 6px; border-radius:4px; margin-right:6px; font-size:.8rem; }
+    .preview { background:white; padding:1rem; border-radius:6px; margin-top:1rem; white-space:pre-wrap; }
+    .chat { background:white; border-radius:6px; margin-top:1.5rem; padding:1rem; }
+    .chat-box { max-height:200px; overflow-y:auto; margin-bottom:1rem; }
+    .chat-box .bot { background:#eef; margin:.3rem 0; padding:.4rem; border-radius:4px; }
+    .chat-box .user { background:#cfe9cf; margin:.3rem 0; padding:.4rem; border-radius:4px; text-align:right; }
+    .chat input { width:80%; padding:.5rem; }
+    .chat button { padding:.5rem 1rem; }
+  </style>
+</head>
+<body>
+  <header>MLR Pre-Screen – Results</header>
+  <main>
+    <h2 id="prodLabel"></h2>
+    <div class="donut" id="donut"><span id="scoreNum">--</span></div>
+    <div class="score"><strong id="scoreLabel">Analyzing...</strong></div>
+    <h3>Preview</h3>
+    <div class="preview" id="preview"></div>
+    <h3>Flagged Issues</h3>
+    <div id="flags"></div>
+
+    <div class="chat">
+      <h3>Ask Compliance Assistant</h3>
+      <div class="chat-box" id="chatScroll"></div>
+      <input type="text" id="chatInput" placeholder="Ask why something was flagged..."/>
+      <button id="sendBtn">Send</button>
+    </div>
+  </main>
+
+  <script>
+    // ---------- Get user input from localStorage ----------
+    const text = localStorage.getItem('mlr_text') || '';
+    const product = localStorage.getItem('mlr_product') || '—';
+    const uploadName = localStorage.getItem('mlr_upload_name') || '';
+
+    document.getElementById('prodLabel').textContent =
+      `Analysis for: ${product}${uploadName ? ' · File: ' + uploadName : ''}`;
+    document.getElementById('preview').textContent =
+      text || '(No text was provided. If you uploaded a file, the analysis is based on file contents.)';
+
+    // ---------- Fake scoring logic ----------
+    const donut = document.getElementById('donut');
+    const scoreNum = document.getElementById('scoreNum');
+    const scoreLabel = document.getElementById('scoreLabel');
+    const flagsEl = document.getElementById('flags');
+
+    // Keywords to "flag"
+    const riskyWords = [
+      { word: 'safest', badge: 'Unsubstantiated Claim', level: 'red', text: '“safest” implies absolute superiority without data' },
+      { word: 'most effective', badge: 'Unsubstantiated Claim', level: 'red', text: '“most effective” needs comparative evidence' },
+      { word: 'guaranteed', badge: 'Improper Guarantee', level: 'amber', text: 'Guarantees are not permitted in promotional claims' },
+      { word: 'perfect vision', badge: 'Misleading Outcome', level: 'amber', text: 'No medical product can promise “perfect vision”' }
+    ];
+
+    // Scan the text
+    let flags = riskyWords.filter(r => text.toLowerCase().includes(r.word));
+    
+    // Set score depending on issues found
+    let score = 90;
+    if (flags.length > 0) score = 60;
+    if (flags.some(f => f.level === 'red')) score = 45;
+
+    // Update donut + label
+    function setDonut(s) {
+      scoreNum.textContent = s;
+      donut.style.setProperty('--val', s);
+      let color = s >= 85 ? getComputedStyle(document.documentElement).getPropertyValue('--green')
+                : (s >= 70 ? getComputedStyle(document.documentElement).getPropertyValue('--amber')
+                : getComputedStyle(document.documentElement).getPropertyValue('--red'));
+      donut.style.setProperty('--color', color);
+      scoreLabel.textContent = s >= 85 ? 'Compliant – minor cautions'
+                          : (s >= 70 ? 'Needs Review – issues found'
+                          : 'High Risk – multiple critical issues');
+    }
+    setDonut(score);
+
+    // Render flags
+    if (flags.length === 0) {
+      const div = document.createElement('div');
+      div.className = 'flag amber';
+      div.innerHTML = `<span class="badge">Review Suggested</span> – No obvious red flags, but double-check risks & references.`;
+      flagsEl.appendChild(div);
+    } else {
+      flags.forEach(f => {
+        const div = document.createElement('div');
+        div.className = `flag ${f.level}`;
+        div.innerHTML = `<span class="badge">${f.badge}</span> – ${f.text}`;
+        flagsEl.appendChild(div);
+      });
+    }
+
+    // ---------- Simple chatbot logic ----------
+    const chatScroll = document.getElementById('chatScroll');
+    const chatInput = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendBtn');
+
+    const botSay = (msg) => {
+      const b = document.createElement('div');
+      b.className = 'bot';
+      b.textContent = msg;
+      chatScroll.appendChild(b);
+      chatScroll.scrollTop = chatScroll.scrollHeight;
+    };
+    const userSay = (msg) => {
+      const u = document.createElement('div');
+      u.className = 'user';
+      u.textContent = msg;
+      chatScroll.appendChild(u);
+      chatScroll.scrollTop = chatScroll.scrollHeight;
+    };
+
+    const knowledge = {
+      unsubstantiated: "Superiority claims like 'safest' or 'most effective' need robust, product-specific evidence (21 CFR 202.1(e)).",
+      guarantee: "You cannot 'guarantee' clinical outcomes — regulators consider this misleading.",
+      outcome: "Terms like 'perfect vision' overpromise results. Use cautious, data-backed language instead."
+    };
+
+    const firstMsg = "Hi! Ask me why something was flagged. Try: 'Why is guaranteed flagged?'";
+    botSay(firstMsg);
+
+    function answer(q) {
+      const s = q.toLowerCase();
+      if (s.includes('safest') || s.includes('effective')) return knowledge.unsubstantiated;
+      if (s.includes('guarantee')) return knowledge.guarantee;
+      if (s.includes('perfect')) return knowledge.outcome;
+      return "I can explain flagged words. Ask me about 'safest', 'most effective', 'guaranteed', or 'perfect vision'.";
+    }
+
+    function send() {
+      const q = chatInput.value.trim();
+      if (!q) return;
+      userSay(q);
+      chatInput.value = '';
+      setTimeout(() => botSay(answer(q)), 200);
+    }
+    sendBtn.addEventListener('click', send);
+    chatInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ send(); }});
+  </script>
+</body>
+</html>
