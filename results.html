@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Alcon MLR Pre-Screening Agent – Results</title>
+  <!-- (keeping all your existing CSS and layout unchanged) -->
+</head>
+<body>
+  <!-- (your existing HTML layout here, unchanged) -->
+
+  <!-- Replace the old script with this new one -->
+  <script>
+    // ---------- Get user input from localStorage ----------
+    const text = localStorage.getItem('mlr_text') || '';
+    const product = localStorage.getItem('mlr_product') || '—';
+    const uploadName = localStorage.getItem('mlr_upload_name') || '';
+
+    document.getElementById('prodLabel').textContent =
+      `Analysis for: ${product}${uploadName ? ' · File: ' + uploadName : ''}`;
+    document.getElementById('preview').textContent =
+      text || '(No text was provided. If you uploaded a file, the analysis is based on file contents.)';
+
+    // ---------- Fake scoring + flagging logic (no UI changes) ----------
+    const donut = document.getElementById('donut');
+    const scoreNum = document.getElementById('scoreNum');
+    const scoreLabel = document.getElementById('scoreLabel');
+    const pctFDA = document.getElementById('pctFDA');
+    const pctFTC = document.getElementById('pctFTC');
+    const pctINT = document.getElementById('pctINT');
+    const barFDA = document.getElementById('barFDA');
+    const barFTC = document.getElementById('barFTC');
+    const barINT = document.getElementById('barINT');
+    const flagsEl = document.getElementById('flags');
+
+    // Minimal keyword rules for demo
+    const riskyWords = [
+      { test: /safest/i,           badge: 'Unsubstantiated Claim', level: 'red',   text: '“safest” implies absolute superiority without adequate evidence' },
+      { test: /most\s+effective/i, badge: 'Unsubstantiated Claim', level: 'red',   text: '“most effective” requires head-to-head comparative support' },
+      { test: /guarantee(d)?/i,    badge: 'Improper Guarantee',    level: 'amber', text: 'Guarantees of outcomes are generally not permitted' },
+      { test: /perfect\s+vision/i, badge: 'Misleading Outcome',    level: 'amber', text: 'Promises of “perfect vision” overstate results' }
+    ];
+
+    const hits = riskyWords.filter(r => r.test.test(text));
+    // Base score from length (original feel), then penalize if flags found
+    const len = text ? text.length : 1;
+    let score = Math.min(96, Math.max(42, Math.round(42 + Math.log(len) * 10)));
+    if (hits.length) score = Math.min(score, 60);
+    if (hits.some(h => h.level === 'red')) score = Math.min(score, 48);
+
+    function setDonut(s) {
+      scoreNum.textContent = s;
+      donut.style.setProperty('--val', s);
+      const color = s >= 85
+        ? getComputedStyle(document.documentElement).getPropertyValue('--green')
+        : (s >= 70
+          ? getComputedStyle(document.documentElement).getPropertyValue('--amber')
+          : getComputedStyle(document.documentElement).getPropertyValue('--red'));
+      donut.style.setProperty('--color', color);
+      scoreLabel.textContent = s >= 85
+        ? 'Compliant – minor cautions'
+        : (s >= 70 ? 'Needs Review – issues found' : 'High Risk – multiple critical issues');
+    }
+    setDonut(score);
+
+    // Sub-scores
+    const fda = Math.max(50, Math.min(95, score - 6));
+    const ftc = Math.max(55, Math.min(96, score - 2));
+    const intl = Math.max(60, Math.min(98, score + 8));
+    pctFDA.textContent = fda + '%'; barFDA.style.width = fda + '%';
+    pctFTC.textContent = ftc + '%'; barFTC.style.width = ftc + '%';
+    pctINT.textContent = intl + '%'; barINT.style.width = intl + '%';
+
+    // Render flags
+    flagsEl.innerHTML = '';
+    if (!hits.length) {
+      const div = document.createElement('div');
+      div.className = 'flag amber';
+      div.innerHTML = `<span class="badge">Review Suggested</span> – No obvious red flags, but verify risks & references.`;
+      flagsEl.appendChild(div);
+    } else {
+      hits.forEach(h => {
+        const div = document.createElement('div');
+        div.className = `flag ${h.level}`;
+        div.innerHTML = `<span class="badge">${h.badge}</span> – ${h.text}`;
+        flagsEl.appendChild(div);
+      });
+    }
+
+    // ---------- Chat (same look; smarter answers) ----------
+    const chatScroll = document.getElementById('chatScroll');
+    const chatInput = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendBtn');
+
+    const botSay = (msg) => {
+      const b = document.createElement('div');
+      b.className = 'bot';
+      b.textContent = msg;
+      chatScroll.appendChild(b);
+      chatScroll.scrollTop = chatScroll.scrollHeight;
+    };
+    const userSay = (msg) => {
+      const u = document.createElement('div');
+      u.className = 'user';
+      u.textContent = msg;
+      chatScroll.appendChild(u);
+      chatScroll.scrollTop = chatScroll.scrollHeight;
+    };
+
+    const knowledge = {
+      unsubstantiated: "Superiority terms (e.g., “safest”, “most effective”) require robust, product-specific evidence (e.g., 21 CFR 202.1(e)).",
+      guarantee: "Promising or guaranteeing clinical outcomes is generally considered misleading in promotional materials.",
+      outcome: "Phrases like “perfect vision” overpromise; prefer precise, data-anchored language aligned to approved indications."
+    };
+
+    const firstMsg = "Hi! Ask me why something was flagged. Try: “Why is guaranteed flagged?”";
+    botSay(firstMsg);
+
+    function answer(q) {
+      const s = q.toLowerCase();
+      if (s.includes('safest') || s.includes('effective')) return knowledge.unsubstantiated;
+      if (s.includes('guarantee')) return knowledge.guarantee;
+      if (s.includes('perfect')) return knowledge.outcome;
+      const list = hits.length ? hits.map(h => h.badge).join(', ') : 'no specific flags';
+      return `We detected: ${list}. Ask “why” about any of them or say “how to fix” for rewrite guidance.`;
+    }
+
+    function send() {
+      const q = chatInput.value.trim();
+      if (!q) return;
+      userSay(q);
+      chatInput.value = '';
+      setTimeout(() => botSay(answer(q)), 200);
+    }
+    sendBtn.addEventListener('click', send);
+    chatInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ send(); }});
+  </script>
+</body>
+</html>
