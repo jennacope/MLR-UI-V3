@@ -41,11 +41,18 @@
     .avatar{width:32px;height:32px;border-radius:999px;background:linear-gradient(135deg,#c7d2fe,#e0e7ff);display:grid;place-items:center;font-weight:600;color:#334155}
 
     /* Centered canvas at 1400px */
-    .wrap{display:flex;justify-content:center;margin:24px auto 64px;padding:0 20px;}
-    .grid{
-      display:grid;grid-template-columns:1.6fr .8fr;gap:20px;align-items:start;
-      max-width:1400px;width:100%;margin:0 auto;
-    }
+    .wrap {
+  display: flex;
+  justify-content: center;   
+}
+
+.grid {
+  max-width: 1400px;         
+  width: 100%;
+  margin: 0 auto;           
+  grid-template-columns: 1.6fr 0.8fr; 
+}
+
     @media (max-width:960px){.grid{grid-template-columns:1fr}}
 
     .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);}
