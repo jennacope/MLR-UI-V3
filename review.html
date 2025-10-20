@@ -186,3 +186,59 @@
   </script>
 </body>
 </html>
+
+<!-- Persist inputs & expand drag/drop WITHOUT changing styles -->
+<script>
+(function enhanceReview(){
+  try{
+    const textarea  = document.getElementById('paste');
+    const charCount = document.getElementById('charCount');
+    const product   = document.getElementById('product');
+    const fileInput = document.getElementById('fileInput');
+    const drop      = document.getElementById('drop');
+    const card      = document.querySelector('section.card.pad[aria-labelledby="content-title"]') || document.querySelector('section.card.pad');
+
+    // Rehydrate saved state on load
+    const savedText = localStorage.getItem('mlr_text') || '';
+    const savedProd = localStorage.getItem('mlr_product');
+    if (textarea){ textarea.value = savedText; if (charCount) charCount.textContent = textarea.value.length; }
+    if (product && savedProd){ product.value = savedProd; }
+
+    // Save on every change
+    if (textarea){
+      textarea.addEventListener('input', () => {
+        if (charCount) charCount.textContent = textarea.value.length;
+        localStorage.setItem('mlr_text', textarea.value);
+      });
+    }
+    if (product){
+      product.addEventListener('change', () => {
+        localStorage.setItem('mlr_product', product.value);
+      });
+    }
+
+    // Expand drag/drop to the whole card to feel chat-like (aesthetic unchanged)
+    if (card && drop){
+      ['dragover','dragenter'].forEach(ev =>
+        card.addEventListener(ev, e => { e.preventDefault(); drop.style.borderColor = '#a5b4fc'; })
+      );
+      ['dragleave','drop'].forEach(ev =>
+        card.addEventListener(ev, e => { e.preventDefault(); drop.style.borderColor = '#cfd8e3'; })
+      );
+      card.addEventListener('drop', (e) => {
+        const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+        if (f) { localStorage.setItem('mlr_upload_name', f.name); }
+      });
+    }
+
+    // Also persist filename on manual attach
+    if (fileInput){
+      fileInput.addEventListener('change', () => {
+        if (fileInput.files && fileInput.files[0]) {
+          localStorage.setItem('mlr_upload_name', fileInput.files[0].name);
+        }
+      });
+    }
+  }catch(e){ console.warn('enhanceReview error', e); }
+})();
+</script>
