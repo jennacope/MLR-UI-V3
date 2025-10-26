@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Alcon MLR Pre-Screening Agent – Results (Detailed Analysis, no recommendations)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --alcon-blue:#0072CE;
+      --alcon-blue-600:#035bb0;
+      --bg:#F6F8FB;
+      --text:#1F2937;
+      --muted:#6B7280;
+      --card:#FFFFFF;
+      --border:#E5E7EB;
+      --shadow:0 10px 20px rgba(16,24,40,.06),0 2px 6px rgba(16,24,40,.06);
+      --green:#12B76A;
+      --amber:#F59E0B;
+      --red:#D92D20;
+      --radius:16px;
+    }
+    body{margin:0;font-family:Inter,sans-serif;color:var(--text);background:var(--bg);line-height:1.45}
+    .topbar{background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;}
+    .topbar .inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 20px;}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:700}
+    .logo{width:28px;height:28px;border-radius:6px;background:var(--alcon-blue)}
+    .crumbs{font-size:12px;color:var(--muted)}
+    .avatar{width:32px;height:32px;border-radius:999px;background:#E0E7FF;display:grid;place-items:center;font-weight:600;color:#334155}
+    .wrap{display:flex;justify-content:center}
+    .grid{max-width:1200px;width:100%;margin:0 auto;padding:16px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:20px}
+    .section-title{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px}
+    .btn{border-radius:12px;padding:8px 12px;font-size:14px}
+    .btn-primary{background:var(--alcon-blue);color:#fff;border:none;cursor:pointer}
+    .preview-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start;margin-bottom:14px}
+    .preview textarea{resize:vertical;min-height:72px;border:none;outline:none;background:transparent;font-size:14px;width:100%}
+    .help{font-size:12px;color:var(--muted);margin-top:6px}
+    .score-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .donut{--deg:0deg;--color:var(--amber);position:relative;width:120px;height:120px;border-radius:50%;display:grid;place-items:center}
+    .donut .ring{position:absolute;inset:0;border-radius:50%;background:conic-gradient(var(--color) var(--deg),#e5e7eb 0);transform:rotate(-90deg);-webkit-mask:radial-gradient(#0000 58%,#000 59%)}
+    .donut .num{font-weight:700;font-size:20px;color:#111}
+    .legend-item{display:flex;align-items:center;gap:6px;font-size:14px}
+    .dot{width:12px;height:12px;border-radius:50%}
+    .dot.green{background:var(--green)}.dot.amber{background:var(--amber)}.dot.red{background:var(--red)}
+    .bubble{margin-top:10px;padding:6px 14px;border-radius:999px;font-weight:600;font-size:13px;display:inline-block}
+    .bubble.green{background:#ECFDF5;color:#065F46;border:1px solid var(--green)}
+    .bubble.amber{background:#FFFAEB;color:#92400E;border:1px solid var(--amber)}
+    .bubble.red{background:#FEF3F2;color:#B91C1C;border:1px solid var(--red)}
+    .bar{height:6px;background:#eef2f7;border-radius:6px;overflow:hidden;width:200px}
+    .bar>i{display:block;height:100%;background:var(--alcon-blue)}
+    .std-row{display:grid;grid-template-columns:1fr 200px 140px;gap:12px;align-items:center;margin:12px 0}
+    .issue{border:1px solid var(--border);border-radius:14px;padding:14px;margin:10px 0}
+    .sev{font-size:12px;font-weight:700;border-radius:999px;padding:2px 8px}
+    .sev.critical{background:#FEE2E2;color:#991B1B}
+    .sev.high{background:#FEF3C7;color:#92400E}
+    .sev.moderate{background:#E0E7FF;color:#3730A3}
+    .tag{font-size:12px;font-weight:700;border-radius:999px;padding:2px 8px;margin-left:4px}
+    .quote{margin-top:8px;color:#111;font-style:italic}
+    .citations{font-size:12px;color:var(--muted);margin-top:6px}
+  </style>
+</head>
+<body>
+<header class="topbar">
+  <div class="inner">
+    <div class="brand"><div class="logo"></div><span>Alcon</span><div class="crumbs">MLR Pre-Screening Agent · Results</div></div>
+    <div class="avatar">SC</div>
+  </div>
+</header>
+<main class="wrap">
+  <div class="grid">
+    <section class="card">
+      <div class="section-title"><h3>Results</h3><a href="review.html" class="btn">← Back to Review</a></div>
+      <div class="preview-row">
+        <div class="preview"><textarea id="contentEditor"></textarea><div class="help">You can edit the submitted content here, then click Reanalyze Content.</div></div>
+        <button id="reanalyzeBtn" class="btn-primary">Reanalyze Content</button>
+      </div>
+      <div class="score-grid">
+        <div class="card"><h3>Overall Compliance Score</h3><div style="display:flex;gap:20px;margin-top:10px">
+          <div class="donut" id="donut"><div class="ring"></div><div class="num" id="scoreNum">—</div></div>
+          <div><div class="legend-item"><span class="dot green"></span> Strong (85–100)</div><div class="legend-item"><span class="dot amber"></span> Needs review (70–84)</div><div class="legend-item"><span class="dot red"></span> High risk (&lt;70)</div><div id="statusBubble" class="bubble amber">Status: …</div></div>
+        </div></div>
+        <div class="card"><h3>Breakdown by Standards</h3><div class="std-row"><span>FDA Compliance</span><div class="bar"><i id="barFDA"></i></div><span id="pctFDA">—%</span></div><div class="std-row"><span>FTC Compliance</span><div class="bar"><i id="barFTC"></i></div><span id="pctFTC">—%</span></div><div class="std-row"><span>MLR Compliance</span><div class="bar"><i id="barMLR"></i></div><span id="pctMLR">—%</span></div><div class="std-row"><span>Internal Standards</span><div class="bar"><i id="barINT"></i></div><span id="pctINT">—%</span></div></div>
+      </div>
+      <div class="card"><h3>Detailed Analysis</h3><div id="issuesWrap"></div></div>
+    </section>
+  </div>
+</main>
+<script>
+const RULES=[{id:'superiority',title:'Unsubstantiated superiority claim',severity:'critical',standards:['FDA','FTC','MLR'],citations:['FDA: 21 CFR 202.1(e)(6)(i)','FTC: Policy Statement on Deception','MLR: Alcon MLR guidance'],patterns:[/most advanced/gi,/safest/gi,/best/gi]},{id:'guarantee',title:'Improper guarantee of outcomes',severity:'high',standards:['FTC','MLR','Internal'],citations:['FTC: Guides on Endorsements','MLR: no guaranteed results','Internal: Alcon policy'],patterns:[/guarantee/gi]},{id:'perfect',title:'Overstated outcome',severity:'high',standards:['FDA','MLR'],citations:['FDA: 21 CFR 202.1(e)(5)','MLR: avoid absolute outcome language'],patterns:[/perfect vision/gi]}];
+function extractIssues(text){const out=[];RULES.forEach(r=>{let hits=[];r.patterns.forEach(re=>{let m;while((m=re.exec(text))!==null)hits.push(m[0]);});if(hits.length)out.push({...r,quotes:[...new Set(hits)]});});return out;}
+function scoreFrom(text){let base=80;let issues=extractIssues(text);return{fda:80,ftc:78,mlr:82,intl:85,overall:base-issues.length*5,issues};}
+function render(s){document.getElementById('scoreNum').textContent=s.overall;let bubble=document.getElementById('statusBubble');if(s.overall>=85){bubble.className='bubble green';bubble.textContent='Strong';}else if(s.overall>=70){bubble.className='bubble amber';bubble.textContent='Needs review';}else{bubble.className='bubble red';bubble.textContent='High risk';}document.getElementById('pctFDA').textContent=s.fda+'%';document.getElementById('barFDA').style.width=s.fda+'%';document.getElementById('pctFTC').textContent=s.ftc+'%';document.getElementById('barFTC').style.width=s.ftc+'%';document.getElementById('pctMLR').textContent=s.mlr+'%';document.getElementById('barMLR').style.width=s.mlr+'%';document.getElementById('pctINT').textContent=s.intl+'%';document.getElementById('barINT').style.width=s.intl+'%';let wrap=document.getElementById('issuesWrap');wrap.innerHTML='';s.issues.forEach(i=>{let d=document.createElement('div');d.className='issue';d.innerHTML='<div><span class="sev '+i.severity+'">'+i.severity+'</span> '+i.title+' '+i.standards.map(s=>'<span class="tag">'+s+'</span>').join('')+'</div>'+i.quotes.map(q=>'<div class="quote">"'+q+'"</div>').join('')+'<div class="citations"><strong>Citations:</strong> '+i.citations.join(' · ')+'</div>';wrap.appendChild(d);});}
+function analyze(){let t=document.getElementById('contentEditor').value;localStorage.setItem('mlr_text',t);render(scoreFrom(t));}
+document.getElementById('reanalyzeBtn').addEventListener('click',analyze);
+render(scoreFrom(localStorage.getItem('mlr_text')||''));
+</script>
+</body>
+</html>
