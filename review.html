@@ -307,16 +307,6 @@ document.addEventListener('DOMContentLoaded', function(){
     right.appendChild(closeBtn);
 
 
-    // Also keep a tiny text "Remove" fallback (hidden by default) for keyboard/screen readers
-    const removeBtn = document.createElement('button');
-    removeBtn.id = 'fileRemoveBtn';
-    removeBtn.type = 'button';
-    removeBtn.textContent = 'Remove';
-    removeBtn.title = 'Remove attachment';
-    removeBtn.setAttribute('aria-label','Remove attachment');
-    removeBtn.style.display = 'none';
-    right.appendChild(removeBtn);
-
     bar.appendChild(left); bar.appendChild(right);
     const parent = textarea.parentNode; parent.insertBefore(wrap, textarea); wrap.appendChild(textarea); wrap.appendChild(bar);
 
