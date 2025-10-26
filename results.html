@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Alcon MLR Pre-Screening Agent – Results (Compact Reanalyze)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --alcon-blue:#0072CE;
+      --alcon-blue-600:#035bb0;
+      --bg:#F6F8FB;
+      --text:#1F2937;
+      --muted:#6B7280;
+      --card:#FFFFFF;
+      --border:#E5E7EB;
+      --shadow:0 10px 20px rgba(16,24,40,.06),0 2px 6px rgba(16,24,40,.06);
+      --green:#12B76A;
+      --amber:#F59E0B;
+      --red:#D92D20;
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--text);background:var(--bg);line-height:1.45}
+
+    /* Topbar */
+    .topbar{background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;}
+    .topbar .inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:16px;justify-content:space-between;padding:14px 20px;}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:700}
+    .logo{width:28px;height:28px;border-radius:6px;background:var(--alcon-blue);box-shadow:inset 0 -8px 16px rgba(255,255,255,.25);}
+    .brand span{color:var(--alcon-blue)}
+    .crumbs{font-size:12px;color:var(--muted)}
+    .avatar{width:32px;height:32px;border-radius:999px;background:linear-gradient(135deg,#c7d2fe,#e0e7ff);display:grid;place-items:center;font-weight:600;color:#334155}
+
+    .wrap{display:flex;justify-content:center}
+    .grid{max-width:1200px;width:100%;margin:0 auto;padding:16px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:20px}
+    .card h3{margin:0 0 8px;font-size:16px}
+    .card .sub{font-size:12px;color:var(--muted)}
+    .section-title{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px}
+    .controls{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{font-family:inherit;font-size:14px;border-radius:12px;border:1px solid var(--alcon-blue);padding:10px 12px;background:#fff;color:var(--alcon-blue);text-decoration:none}
+    .btn-primary{border-color:var(--alcon-blue);background:var(--alcon-blue);color:#fff;cursor:pointer;}
+    .btn-primary:hover{background:var(--alcon-blue-600)}
+    .btn-compact{padding:10px 14px;border-radius:12px;font-weight:600;font-size:14px;white-space:nowrap}
+
+    /* Editable preview row (compact) */
+    .preview-row{display:grid;grid-template-columns: 1fr auto;gap:12px;align-items:start;margin-bottom:14px}
+    @media (max-width:720px){.preview-row{grid-template-columns:1fr}}
+    .preview{border-radius:12px;border:1px dashed var(--border);background:#FBFCFE;padding:12px;display:flex;flex-direction:column}
+    .preview .label{font-size:12px;color:var(--muted);margin-bottom:6px}
+    .preview textarea{
+      resize:vertical;min-height:72px;max-height:280px;border:none;outline:none;background:transparent;
+      font-family:inherit;font-size:14px;color:#111;line-height:1.5;
+    }
+    .help{font-size:12px;color:var(--muted);margin-top:6px}
+
+    /* Two inner cards */
+    .score-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px}
+    @media (max-width:900px){.score-grid{grid-template-columns:1fr}}
+
+    /* Donut */
+    .donut{--deg:0deg;--color:var(--amber);width:120px;height:120px;border-radius:50%;
+      background: conic-gradient(var(--color) var(--deg), #e5e7eb 0);
+      transform: rotate(-90deg);
+      -webkit-mask: radial-gradient(#0000 58%, #000 59%);
+              mask: radial-gradient(#0000 58%, #000 59%);
+      display:grid;place-items:center}
+    .donut .num{transform: rotate(90deg);font-weight:700;font-size:20px;color:#111}
+    .donut-wrap{display:flex;align-items:center;gap:20px}
+
+    /* Legend + bubble */
+    .legend{font-size:14px;line-height:1.8}
+    .legend-item{display:flex;align-items:center;gap:6px}
+    .dot{width:12px;height:12px;border-radius:50%}
+    .dot.green{background:var(--green)}
+    .dot.amber{background:var(--amber)}
+    .dot.red{background:var(--red)}
+    .bubble{display:inline-block;margin-top:10px;padding:6px 14px;border-radius:999px;font-weight:600;font-size:13px}
+    .bubble.red{background:#FEF3F2;color:#B91C1C;border:1px solid var(--red)}
+    .bubble.amber{background:#FFFAEB;color:#92400E;border:1px solid var(--amber)}
+    .bubble.green{background:#ECFDF5;color:#065F46;border:1px solid var(--green)}
+
+    /* Standards breakdown */
+    .bar{height:6px;background:#eef2f7;border-radius:6px;overflow:hidden;width:200px;margin-left:8px}
+    .bar > i{display:block;height:100%;background:var(--alcon-blue)}
+    .std-row{display:grid;grid-template-columns:1fr 200px 160px;align-items:center;gap:12px;margin:12px 0}
+  </style>
+</head>
+<body>
+  <header class="topbar" role="banner">
+    <div class="inner">
+      <div class="brand" aria-label="Alcon">
+        <div class="logo" aria-hidden="true"></div>
+        <span>Alcon</span>
+        <div class="crumbs">MLR Pre-Screening Agent · Results</div>
+      </div>
+      <div class="avatar" aria-label="User avatar" title="Sarah Chen">SC</div>
+    </div>
+  </header>
+
+  <main class="wrap" role="main">
+    <div class="grid">
+      <!-- Outer full-width card -->
+      <section class="card">
+        <div class="section-title">
+          <div>
+            <h3>Results</h3>
+            <div class="sub" id="prodLabel">Analysis for: —</div>
+          </div>
+          <div class="controls">
+            <a href="review.html" class="btn">← Back to Review</a>
+          </div>
+        </div>
+
+        <!-- Editable preview + reanalyze (compact, no placeholder, helper text) -->
+        <div class="preview-row" aria-labelledby="preview-label">
+          <div class="preview">
+            <div id="preview-label" class="label">Submitted Content (editable)</div>
+            <textarea id="contentEditor"></textarea>
+            <div class="help">You can edit the submitted content here if changes are needed, then click <strong>Reanalyze Content</strong>.</div>
+          </div>
+          <button id="reanalyzeBtn" class="btn-primary btn-compact" aria-label="Reanalyze content">Reanalyze Content</button>
+        </div>
+
+        <!-- Inner score cards -->
+        <div class="score-grid">
+          <!-- Card A: Overall Compliance Score -->
+          <div class="card">
+            <h3>Overall Compliance Score</h3>
+            <div class="donut-wrap" style="margin-top:10px">
+              <div class="donut" id="donut"><div class="num" id="scoreNum">—</div></div>
+              <div>
+                <div class="legend">
+                  <div class="legend-item"><span class="dot green"></span> Strong (85–100)</div>
+                  <div class="legend-item"><span class="dot amber"></span> Needs review (70–84)</div>
+                  <div class="legend-item"><span class="dot red"></span> High risk (&lt;70)</div>
+                </div>
+                <div id="statusBubble" class="bubble amber">Status: …</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card B: Breakdown by Standards -->
+          <div class="card">
+            <h3>Breakdown by Standards</h3>
+            <div class="sub">Each row shows the % of content that is compliant for that standard.</div>
+            <div style="margin-top:8px">
+              <div class="std-row"><span>FDA Compliance</span><div class="bar"><i id="barFDA"></i></div><span id="pctFDA">—% compliant</span></div>
+              <div class="std-row"><span>FTC Compliance</span><div class="bar"><i id="barFTC"></i></div><span id="pctFTC">—% compliant</span></div>
+              <div class="std-row"><span>MLR Compliance</span><div class="bar"><i id="barMLR"></i></div><span id="pctMLR">—% compliant</span></div>
+              <div class="std-row"><span>Internal Standards</span><div class="bar"><i id="barINT"></i></div><span id="pctINT">—% compliant</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    // ---------- Data bootstrap ----------
+    const product = localStorage.getItem('mlr_product') || '—';
+    const uploadName = localStorage.getItem('mlr_upload_name') || '';
+    document.getElementById('prodLabel').textContent = `Analysis for: ${product}${uploadName ? ' · File: ' + uploadName : ''}`;
+
+    const editor = document.getElementById('contentEditor');
+    const storedText = localStorage.getItem('mlr_text') || '';
+    editor.value = storedText; // no placeholder — always carry over
+
+    // ---------- Scoring model (placeholder logic) ----------
+    function scoreFrom(text){
+      const len = (text && text.length) ? text.length : 1;
+      let base = Math.min(96, Math.max(42, Math.round(42 + Math.log(len) * 10)));
+
+      const riskyRules = [/world[’'`]?s?\s+most\s+advanced/i,/safest/i,/most\s+effective/i,/guarantee(d)?/i,/perfect\s+vision/i];
+      const hasHit = riskyRules.some(r => r.test(text || ''));
+
+      let fda  = Math.max(50, Math.min(95, base - 6));
+      let ftc  = Math.max(55, Math.min(96, base - 2));
+      let mlr  = Math.max(55, Math.min(97, base + 2));
+      let intl = Math.max(60, Math.min(98, base + 8));
+
+      if (hasHit){ fda-=12; ftc-=10; mlr-=9; intl-=4; }
+
+      const clamp = v => Math.max(0, Math.min(100, Math.round(v)));
+      fda=clamp(fda); ftc=clamp(ftc); mlr=clamp(mlr); intl=clamp(intl);
+      const overall = clamp(fda*0.40 + ftc*0.25 + mlr*0.20 + intl*0.15);
+      return {fda, ftc, mlr, intl, overall};
+    }
+
+    function renderBreakdown({fda, ftc, mlr, intl}){
+      const rows = [['FDA', fda], ['FTC', ftc], ['MLR', mlr], ['INT', intl]];
+      for (const [id,val] of rows){
+        document.getElementById('pct'+id).textContent = val + '% compliant';
+        document.getElementById('bar'+id).style.width = val + '%';
+      }
+    }
+
+    const donut = document.getElementById('donut');
+    const scoreNum = document.getElementById('scoreNum');
+    const statusBubble = document.getElementById('statusBubble');
+    function renderDonut(pct){
+      scoreNum.textContent = pct;
+      donut.style.setProperty('--deg', (pct * 3.6) + 'deg');
+      if (pct >= 85){
+        donut.style.setProperty('--color', 'var(--green)');
+        statusBubble.className = 'bubble green';
+        statusBubble.textContent = 'Strong – compliant';
+      } else if (pct >= 70){
+        donut.style.setProperty('--color', 'var(--amber)');
+        statusBubble.className = 'bubble amber';
+        statusBubble.textContent = 'Needs review – some issues';
+      } else {
+        donut.style.setProperty('--color', 'var(--red)');
+        statusBubble.className = 'bubble red';
+        statusBubble.textContent = 'High risk – multiple critical issues';
+      }
+    }
+
+    function analyzeNow(text){
+      const s = scoreFrom(text);
+      renderBreakdown(s);
+      renderDonut(s.overall);
+    }
+
+    // Initial render
+    analyzeNow(editor.value);
+
+    // Button event
+    const btn = document.getElementById('reanalyzeBtn');
+    btn.addEventListener('click', () => {
+      const newText = editor.value;
+      localStorage.setItem('mlr_text', newText);
+      btn.disabled = true; const original = btn.textContent; btn.textContent = 'Analyzing…';
+      setTimeout(() => {
+        analyzeNow(newText);
+        btn.disabled = false; btn.textContent = 'Reanalyze Content';
+      }, 250);
+    });
+  </script>
+</body>
+</html>
