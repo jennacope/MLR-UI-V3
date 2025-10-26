@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Alcon MLR Pre-Screening Agent – Results (Updated with % Compliant)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --alcon-blue:#0072CE;
+      --alcon-blue-600:#035bb0;
+      --bg:#F6F8FB;
+      --text:#1F2937;
+      --muted:#6B7280;
+      --card:#FFFFFF;
+      --border:#E5E7EB;
+      --shadow:0 10px 20px rgba(16,24,40,.06),0 2px 6px rgba(16,24,40,.06);
+      --green:#12B76A;
+      --amber:#FEC84B;
+      --red:#D92D20;
+      --teal:#2DD4BF;
+      --radius:16px;
+    }
+    body{margin:0;font-family:Inter,sans-serif;color:var(--text);background:var(--bg)}
+    .topbar{background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;}
+    .topbar .inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:16px;justify-content:space-between;padding:14px 20px;}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:700}
+    .logo{width:28px;height:28px;border-radius:6px;background:var(--alcon-blue);}
+    .brand span{color:var(--alcon-blue)}
+    .crumbs{font-size:12px;color:var(--muted)}
+    .avatar{width:32px;height:32px;border-radius:999px;background:#c7d2fe;display:grid;place-items:center;font-weight:600;color:#334155}
+
+    .wrap { display: flex; justify-content: center; }
+    .grid { max-width: 1400px; width: 100%; margin: 0 auto; display: grid; grid-template-columns: 1.6fr 0.8fr; gap: 16px; padding: 16px; }
+    @media (max-width:960px){.grid{grid-template-columns:1fr}}
+
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+    .card h3{margin:0 0 8px;font-size:16px}
+    .card .sub{font-size:12px;color:var(--muted)}
+    .donut{--val:68; --color:var(--amber); width:94px;height:94px;border-radius:50%;display:grid;place-items:center;background:
+      conic-gradient(var(--color) calc(var(--val)*1%),#e5e7eb 0);position:relative;}
+    .donut::after{content:"";position:absolute;inset:8px;background:#fff;border-radius:50%;}
+    .donut span{position:relative;font-weight:700;color:#111}
+
+    .bar{height:6px;background:#eef2f7;border-radius:6px;overflow:hidden;width:140px;margin-left:8px}
+    .bar > i{display:block;height:100%;background:var(--alcon-blue);}
+
+    .std-row{display:grid;grid-template-columns: 1fr 140px 110px;align-items:center;gap:10px;margin:8px 0;}
+    .std-name{font-size:14px;color:var(--text)}
+    .hint{position:relative;cursor:help}
+    .hint[data-hint]:hover::after{content:attr(data-hint);position:absolute;left:0;top:115%;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow);padding:8px 10px;font-size:12px;color:var(--text);width:260px;z-index:10}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="inner">
+      <div class="brand"><div class="logo"></div><span>Alcon</span><div class="crumbs">MLR Pre-Screening Agent · Results</div></div>
+      <div class="avatar">SC</div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="grid">
+      <section class="card">
+        <h3>Compliance Score</h3>
+        <div class="sub">Overall score weighted from FDA (40%), FTC (25%), MLR (20%), and Internal (15%).</div>
+        <div style="display:flex;align-items:center;gap:16px;margin-top:8px">
+          <div class="donut" id="donut"><span id="scoreNum">—</span></div>
+          <div style="min-width:320px">
+            <div class="pill" id="scoreLabel" style="margin-bottom:10px">Calculating…</div>
+            <div>
+              <div class="std-row">
+                <span class="std-name hint" data-hint="FDA: substantiation, fair balance, safety info">FDA Compliance</span>
+                <div class="bar"><i id="barFDA"></i></div>
+                <span id="pctFDA">—% compliant</span>
+              </div>
+              <div class="std-row">
+                <span class="std-name hint" data-hint="FTC: truthful, non‑misleading advertising">FTC Compliance</span>
+                <div class="bar"><i id="barFTC"></i></div>
+                <span id="pctFTC">—% compliant</span>
+              </div>
+              <div class="std-row">
+                <span class="std-name hint" data-hint="MLR: Medical/Legal/Regulatory review requirements">MLR Compliance</span>
+                <div class="bar"><i id="barMLR"></i></div>
+                <span id="pctMLR">—% compliant</span>
+              </div>
+              <div class="std-row">
+                <span class="std-name hint" data-hint="Internal: Alcon policies, disclaimers, house style">Internal Standards</span>
+                <div class="bar"><i id="barINT"></i></div>
+                <span id="pctINT">—% compliant</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const text = localStorage.getItem('mlr_text')||'';
+    // Basic scoring (dummy logic for now)
+    let base = Math.min(96, Math.max(42, Math.round(42 + Math.log((text && text.length) ? text.length : 1) * 10)));
+    let fda=base-6, ftc=base-2, mlr=base+2, intl=base+8;
+    fda=Math.max(0,Math.min(100,fda)); ftc=Math.max(0,Math.min(100,ftc));
+    mlr=Math.max(0,Math.min(100,mlr)); intl=Math.max(0,Math.min(100,intl));
+    const overall=Math.round(fda*0.40+ftc*0.25+mlr*0.20+intl*0.15);
+
+    function render(id,val){document.getElementById('pct'+id).textContent=val+'% compliant';document.getElementById('bar'+id).style.width=val+'%';}
+    render('FDA',fda);render('FTC',ftc);render('MLR',mlr);render('INT',intl);
+
+    const donut=document.getElementById('donut');const scoreNum=document.getElementById('scoreNum');const scoreLabel=document.getElementById('scoreLabel');
+    function setDonut(s){scoreNum.textContent=s;donut.style.setProperty('--val',s);
+      let color=s>=85?'var(--green)':s>=70?'var(--amber)':'var(--red)';
+      donut.style.setProperty('--color',color);
+      scoreLabel.textContent=s>=85?'Compliant – minor cautions':s>=70?'Needs Review – some issues':'High Risk – multiple critical issues';}
+    setDonut(overall);
+  </script>
+</body>
+</html>
