@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Alcon MLR Pre‑Screening Agent – Results (Fixed Export Button)</title>
+<title>Alcon MLR Pre-Screening Agent – Results (Fixed Export Button)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -24,12 +24,12 @@
 }
 body{margin:0;font-family:Inter,sans-serif;color:var(--text);background:var(--bg)}
 
-/* --- ONLY UPDATED PART: Export footer --- */
+/* Export footer fixed at bottom (ONLY CHANGE #1) */
 .export-footer {
   position: fixed;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  bottom: 20px;
   z-index: 1000;
   display: none; /* hidden until bottom */
 }
@@ -50,7 +50,7 @@ body{margin:0;font-family:Inter,sans-serif;color:var(--text);background:var(--bg
 <body>
   <div style="min-height:150vh;padding:20px">
     <h1>Demo Page</h1>
-    <p>Scroll down and the export button should appear centered at the bottom once you reach the end of the page.</p>
+    <p>Scroll down and the export button should remain at the bottom right corner of the window.</p>
   </div>
 
   <!-- Fixed Export Button -->
@@ -60,24 +60,25 @@ body{margin:0;font-family:Inter,sans-serif;color:var(--text);background:var(--bg
 
 <!-- html2pdf.js CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
 <script>
-// --- ONLY UPDATED PART: show button only at bottom ---
-(function() {
+/* ONLY CHANGE #2: reveal button only at bottom */
+(function () {
   const footer = document.querySelector('.export-footer');
   function toggleFooter() {
     const scrollBottom = window.scrollY + window.innerHeight;
-    const docHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
-    if (scrollBottom >= docHeight - 5) {
-      footer.style.display = 'block';
-    } else {
-      footer.style.display = 'none';
-    }
+    const docHeight = Math.max(
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight
+    );
+    footer.style.display = (scrollBottom >= docHeight - 5) ? 'block' : 'none';
   }
   toggleFooter();
   window.addEventListener('scroll', toggleFooter, { passive: true });
   window.addEventListener('resize', toggleFooter);
 })();
 
+/* original click handler unchanged */
 document.getElementById('exportPDF').addEventListener('click', () => {
   const opt = {
     margin: 0.5,
