@@ -599,9 +599,9 @@ const statusBubble=document.getElementById('statusBubble');
 function renderDonut(pct){
   scoreNum.textContent=pct;
   donut.style.setProperty('--deg',(pct*3.6)+'deg');
-  if(pct>=85){ donut.style.setProperty('--color','var(--green)'); statusBubble.className='bubble green'; statusBubble.textContent='Strong – compliant'; }
-  else if(pct>=70){ donut.style.setProperty('--color','var(--amber)'); statusBubble.className='bubble amber'; statusBubble.textContent='Needs review – some issues'; }
-  else { donut.style.setProperty('--color','var(--red)'); statusBubble.className='bubble red'; statusBubble.textContent='High risk – multiple critical issues'; }
+  if(pct>=85){ donut.style.setProperty('--color','var(--green)'); statusBubble.className='bubble green'; statusBubble.textContent='Low Risk – compliant'; }
+  else if(pct>=70){ donut.style.setProperty('--color','var(--amber)'); statusBubble.className='bubble amber'; statusBubble.textContent='Needs Review – some issues'; }
+  else { donut.style.setProperty('--color','var(--red)'); statusBubble.className='bubble red'; statusBubble.textContent='High risk – critical issues '; }
 }
 function el(tag,attrs={},html=''){ const n=document.createElement(tag); Object.entries(attrs).forEach(([k,v])=>{ if(k==='class') n.className=v; else n.setAttribute(k,v); }); if(html) n.innerHTML=html; return n; }
 
