@@ -659,10 +659,13 @@ function simulateImprovedScores(text, issues) {
 
 function formatDelta(before, after) {
   if (!before || !after) return '';
-  const diff = (after.overall - before.overall);
+  const diff = after.overall - before.overall;
   const arrow = diff > 0 ? '↑' : diff < 0 ? '↓' : '—';
-  return [
-    `Estimated overall score: ${before.overall} → ${after.overall} (${arrow} ${diff > 0 ? '+' + diff : diff} pts)`,
+  const delta = diff > 0 ? `+${diff}` : diff;
+
+  const lines = [
+    '<strong>Estimated impact on scores:</strong>',
+    `Estimated overall score: ${before.overall} → ${after.overall} (${arrow} ${delta} pts)`,
     `FDA: ${before.fda}% → ${after.fda}%`,
     `FTC: ${before.ftc}% → ${after.ftc}%`,
     `Medical: ${before.mlrMed}% → ${after.mlrMed}%`,
@@ -670,9 +673,11 @@ function formatDelta(before, after) {
     `Regulatory: ${before.mlrReg}% → ${after.mlrReg}%`,
     '',
     'To reflect this in the main scorecards, paste the alternative wording into your content and click “Reanalyze Content.”'
-  ].join('\n');
-}
+  ];
 
+  // Use <br> so it renders like ChatGPT-style stacked lines in the bubble
+  return lines.join('<br>');
+}
 function handleChat(q, issues) {
   const s = (q || '').toLowerCase();
   const ex = explainers();
@@ -685,27 +690,73 @@ function handleChat(q, issues) {
     if (s.includes('guarantee')) return ex.guarantee;
     if (s.includes('perfect')) return ex.perfect;
     if (s.includes('glasses')) return ex.no_glasses;
-    return hasIssues
-      ? 'Here’s what I’m most concerned about: ' + issues.map(i => i.title).join('; ') + '. You can click “Reanalyze Content” after edits to see the updated score.'
-      : 'I don’t currently see any of the high‑risk patterns I look for. You can still add fair‑balance language if you’d like.';
+
+    if (hasIssues) {
+      const list = issues.map((i, idx) => `${idx + 1}. ${i.title}`).join('<br>');
+      return [
+        'Here’s what I’m most concerned about in your content:',
+        '',
+        list,
+        '',
+        'Next steps:',
+        '• Soften or qualify absolute claims.',
+        '• Add fair-balance language near strong benefit statements.',
+        '• Click “Reanalyze Content” after edits to update the score.'
+      ].join('<br>');
+    } else {
+      return [
+        'I’m not currently seeing any of the high-risk patterns I look for.',
+        '',
+        'You can still:',
+        '• Add or strengthen fair-balance language.',
+        '• Double-check that strong claims are anchored to approved data.',
+        '• Ask me for alternative phrasing if something still feels risky.'
+      ].join('<br>');
+    }
   }
 
   // rewrite / alternative requests
-  if (s.includes('rewrite') || s.includes('alternative') || s.includes('alt') || s.includes('how should i say') || s.includes('fix') || s.includes('acceptable')) {
+  if (
+    s.includes('rewrite') ||
+    s.includes('alternative') ||
+    s.includes('alt') ||
+    s.includes('how should i say') ||
+    s.includes('fix') ||
+    s.includes('acceptable')
+  ) {
     if (!hasIssues) {
-      return 'I’m not detecting any of my high‑risk patterns right now. You can still soften claims by avoiding absolutes and pairing benefits with variability language.';
+      return [
+        'I’m not detecting any of my high-risk patterns right now.',
+        '',
+        'If you’d still like to soften the language, you can:',
+        '• Avoid absolutes like “never,” “always,” or “perfect.”',
+        '• Pair strong benefit statements with variability or risk language.',
+        '• Keep claims tied closely to approved indications.'
+      ].join('<br>');
     }
+
     const sim = simulateImprovedScores(text, issues);
-    let response = 'Here’s a more compliant alternative you could use:\n\n';
+    const parts = [];
+
+    parts.push('Here’s a more compliant alternative you could use:','');
+
     if (sim.alt) {
-      response += '“' + sim.alt + '”\n\n';
+      parts.push('“' + sim.alt + '”','');
     }
-    response += formatDelta(sim.before, sim.after);
-    return response;
+
+    // Append neatly formatted score deltas
+    parts.push(formatDelta(sim.before, sim.after));
+
+    return parts.join('<br>');
   }
 
   // default guidance
-  return 'You can ask things like:\n• “Why was this phrase flagged?”\n• “Can you suggest a compliant alternative?”\n• “How would this change my score?”';
+  return [
+    'You can ask things like:',
+    '• “Why was this phrase flagged?”',
+    '• “Can you suggest a compliant alternative?”',
+    '• “How would this change my score?”'
+  ].join('<br>');
 }
 
 if (chatLog) {
