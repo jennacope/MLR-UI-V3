@@ -117,6 +117,14 @@
     .combo-list li{padding:8px 12px;cursor:pointer}
     .combo-list li[aria-selected="true"],.combo-list li:hover{background:rgba(0,0,0,.04)}
   </style>
+  <script>
+    // One-time SSO gate per user (persists across refreshes)
+    const userSession = localStorage.getItem('mlrDemoUser');
+
+    if (!userSession) {
+      window.location.href = 'login.html';
+    }
+  </script>
 </head>
 <body>
   <header class="topbar" role="banner">
