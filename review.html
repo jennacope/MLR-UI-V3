@@ -359,6 +359,14 @@ document.addEventListener('DOMContentLoaded', function(){
     document.addEventListener('click', e=>{ if(!wrap.contains(e.target)) setExpanded(false); });
     caret.addEventListener('click', e=>{ e.stopPropagation(); if(list.getAttribute('aria-hidden')==='true'){ items=filter(input.value); render(items,active); setExpanded(true); input.focus(); } else setExpanded(false); });
   })();
+  // ✅ DEMO LOGOUT (force SSO reset)
+const logoutBtn = document.getElementById('logoutBtn');
+if (logoutBtn) {
+  logoutBtn.addEventListener('click', () => {
+    localStorage.removeItem('mlrDemoUser');
+    window.location.href = 'login.html';
+  });
+}
 });
 </script>
 </body>
