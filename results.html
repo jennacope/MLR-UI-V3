@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Alcon MLR Pre-Screen – Results</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{
+  --bg:#F5F5F7;
+  --card:#FFFFFF;
+  --border:#E5E7EB;
+  --text:#111827;
+  --muted:#6B7280;
+  --accent:#F97316;
+  --accent-soft:#FEF3C7;
+  --accent-border:#FDBA74;
+  --green:#16A34A;
+  --green-soft:#DCFCE7;
+  --green-border:#4ADE80;
+  --red:#DC2626;
+  --red-soft:#FEE2E2;
+  --red-border:#FCA5A5;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+.page{
+  max-width:1200px;
+  margin:24px auto 40px;
+  padding:0 16px 40px;
+}
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:12px;
+}
+.header-left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.header-title{
+  font-weight:600;
+  font-size:20px;
+}
+.header-pill{
+  background:#EEF2FF;
+  color:#4F46E5;
+  border-radius:999px;
+  padding:3px 10px;
+  font-size:11px;
+  font-weight:500;
+}
+.header-right{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.meta{
+  font-size:11px;
+  color:var(--muted);
+}
+.meta span+span::before{
+  content:'·';
+  margin:0 6px;
+}
+.card{
+  background:var(--card);
+  border-radius:16px;
+  border:1px solid var(--border);
+  padding:16px 18px 18px;
+  box-shadow:0 10px 25px rgba(15,23,42,0.04);
+}
+.layout{
+  display:grid;
+  grid-template-columns:1.4fr 1.1fr;
+  gap:14px;
+  margin-top:12px;
+}
+@media(max-width:980px){
+  .layout{grid-template-columns:1fr;}
+}
+.section-title{
+  font-size:14px;
+  font-weight:600;
+  margin-bottom:8px;
+}
+.row{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+}
+.donut-wrap{
+  display:flex;
+  gap:14px;
+  align-items:center;
+}
+.legend{
+  font-size:12px;
+  color:var(--muted);
+}
+.legend-row{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin-bottom:4px;
+}
+.legend-dot{
+  width:8px;
+  height:8px;
+  border-radius:999px;
+}
+.legend-dot.green{background:var(--green);}
+.legend-dot.amber{background:#F59E0B;}
+.legend-dot.red{background:var(--red);}
+.donut{
+  position:relative;
+  width:124px;
+  height:124px;
+}
+.donut svg{
+  width:100%;
+  height:100%;
+}
+.donut-score{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:26px;
+  font-weight:600;
+}
+.status-pill{
+  display:inline-flex;
+  align-items:center;
+  border-radius:999px;
+  padding:6px 14px;
+  font-size:12px;
+  font-weight:500;
+  background:var(--accent-soft);
+  color:#92400E;
+  border:1px solid var(--accent-border);
+}
+.status-pill.low{
+  background:var(--green-soft);
+  border-color:var(--green-border);
+  color:#166534;
+}
+.status-pill.high{
+  background:var(--red-soft);
+  border-color:var(--red-border);
+  color:#991B1B;
+}
+.badges{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:6px;
+}
+.badge{
+  border-radius:999px;
+  border:1px solid var(--border);
+  padding:4px 10px;
+  font-size:11px;
+  background:#F9FAFB;
+  color:var(--muted);
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+.badge-dot{
+  width:7px;
+  height:7px;
+  border-radius:999px;
+}
+.badge-dot.green{background:var(--green);}
+.badge-dot.amber{background:#F59E0B;}
+.badge-dot.red{background:var(--red);}
+.breakdown-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+}
+.break-card{
+  border-radius:12px;
+  border:1px solid var(--border);
+  padding:10px 12px;
+  background:#F9FAFB;
+}
+.break-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:4px;
+}
+.break-title{
+  font-size:12px;
+  font-weight:600;
+}
+.break-score{
+  font-size:16px;
+  font-weight:600;
+}
+.break-pill{
+  display:inline-flex;
+  align-items:center;
+  border-radius:999px;
+  padding:3px 8px;
+  font-size:10px;
+  font-weight:500;
+  background:#E5E7EB;
+  color:#374151;
+}
+.break-pill.low{
+  background:var(--green-soft);
+  color:#166534;
+}
+.break-pill.mid{
+  background:var(--accent-soft);
+  color:#92400E;
+}
+.break-pill.high{
+  background:var(--red-soft);
+  color:#991B1B;
+}
+.break-body{
+  margin-top:6px;
+  font-size:11px;
+  color:var(--muted);
+}
+.detail-card{
+  padding:14px 16px 16px;
+}
+.detail-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:4px;
+}
+.detail-title{
+  font-size:14px;
+  font-weight:600;
+}
+.detail-meta{
+  font-size:12px;
+  color:var(--muted);
+}
+.detail-meta span+span::before{
+  content:'·';
+  margin:0 6px;
+}
+.issue{
+  border-radius:12px;
+  border:1px solid var(--border);
+  padding:10px 12px 10px;
+  background:#F9FAFB;
+  margin-top:8px;
+}
+.issue-head{
+  display:flex;
+  justify-content:flex-start;
+  align-items:center;
+  gap:8px;
+  margin-bottom:4px;
+}
+.sev{
+  border-radius:999px;
+  font-size:10px;
+  font-weight:500;
+  padding:3px 9px;
+}
+.sev.critical{
+  background:var(--red-soft);
+  color:#991B1B;
+  border:1px solid var(--red-border);
+}
+.sev.high{
+  background:var(--accent-soft);
+  color:#92400E;
+  border:1px solid var(--accent-border);
+}
+.sev.moderate{
+  background:#ECFDF5;
+  color:#065F46;
+  border:1px solid var(--green);
+}
+.issue-expl{
+  margin-top:4px;
+  font-size:13px;
+  color:#555;
+}
+.tag{
+  border-radius:999px;
+  background:#EEF2FF;
+  color:#4F46E5;
+  padding:2px 7px;
+  font-size:10px;
+}
+.quote{
+  font-size:12px;
+  margin-top:6px;
+  font-style:italic;
+}
+.citations{
+  margin-top:6px;
+  font-size:11px;
+  color:#4B5563;
+}
+.citations strong{
+  font-weight:600;
+}
+.citations ul{
+  margin:4px 0 0 18px;
+  padding-left:4px;
+}
+.quote-list{
+  margin:8px 0 0 16px;
+  padding-left:4px;
+  color:#111;
+  font-size:13px;
+}
+.quote-list li{
+  margin-bottom:4px;
+  font-style:italic;
+}
+.flagged-phrase{
+  font-size:16px;
+  line-height:1.4;
+}
+.recs-card{
+  padding:14px 16px 16px;
+}
+.recs-intro{
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:6px;
+}
+.rec-item{
+  border-radius:12px;
+  border:1px solid var(--border);
+  padding:10px 12px;
+  background:#F9FAFB;
+  margin-top:8px;
+}
+.rec-label{
+  font-size:11px;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+  color:#4B5563;
+  margin-bottom:2px;
+}
+.rec-copy{
+  font-size:13px;
+}
+.rec-meta{
+  margin-top:4px;
+  font-size:11px;
+  color:var(--muted);
+}
+.chat-card{
+  margin-top:12px;
+}
+.chat-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:6px;
+}
+.chat-title{
+  font-size:14px;
+  font-weight:600;
+}
+.chat-tagline{
+  font-size:11px;
+  color:var(--muted);
+}
+.chat-box{
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:#F9FAFB;
+  padding:10px 12px;
+}
+.chat-log{
+  max-height:190px;
+  overflow-y:auto;
+  font-size:12px;
+  margin-bottom:8px;
+}
+.chat-msg{
+  margin-bottom:8px;
+}
+.chat-msg.system .body{
+  background:#EEF2FF;
+  color:#111827;
+}
+.chat-msg.user .body{
+  background:#E5E7EB;
+}
+.chat-msg .who{
+  font-size:10px;
+  font-weight:600;
+  margin-bottom:2px;
+  color:#4B5563;
+}
+.chat-msg .body{
+  border-radius:10px;
+  padding:8px 9px;
+}
+.chat-input-row{
+  display:flex;
+  gap:8px;
+  margin-top:4px;
+}
+.chat-input{
+  flex:1;
+  border-radius:999px;
+  border:1px solid #D1D5DB;
+  padding:7px 10px;
+  font-size:12px;
+}
+.chat-input:focus{
+  outline:none;
+  border-color:#4F46E5;
+}
+.chat-btn{
+  border-radius:999px;
+  border:none;
+  padding:7px 12px;
+  font-size:12px;
+  font-weight:500;
+  background:#4F46E5;
+  color:white;
+  cursor:pointer;
+}
+.chat-btn:disabled{
+  opacity:.6;
+  cursor:default;
+}
+.footer{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:14px;
+  font-size:11px;
+  color:var(--muted);
+}
+.footer-left{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.footer-right{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.btn-link{
+  border:none;
+  background:none;
+  padding:0;
+  font-size:11px;
+  color:#4F46E5;
+  cursor:pointer;
+}
+.btn-primary{
+  border-radius:999px;
+  border:none;
+  padding:6px 12px;
+  font-size:11px;
+  font-weight:500;
+  background:#111827;
+  color:white;
+  cursor:pointer;
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div class="header-left">
+      <div class="header-title">MLR Pre-Screening Results</div>
+      <div class="header-pill">Prototype · Clareon / TOTAL30</div>
+    </div>
+    <div class="header-right">
+      <div class="meta">
+        <span>Run context: Marketing copy only</span>
+        <span>Generated: <span id="runTime"></span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="layout">
+      <!-- Left: Overall + Breakdown -->
+      <div>
+        <div class="row">
+          <div style="flex:1.1;">
+            <div class="section-title">Overall Compliance Score</div>
+            <div class="donut-wrap">
+              <div class="donut">
+                <svg viewBox="0 0 40 40">
+                  <circle cx="20" cy="20" r="16" fill="none" stroke="#E5E7EB" stroke-width="4"></circle>
+                  <circle id="donutArc" cx="20" cy="20" r="16" fill="none" stroke="#F97316" stroke-width="4"
+                          stroke-dasharray="100"
+                          stroke-dashoffset="0"
+                          stroke-linecap="round"
+                          transform="rotate(-90 20 20)"></circle>
+                </svg>
+                <div class="donut-score" id="scoreNum">81</div>
+              </div>
+              <div class="legend">
+                <div class="legend-row">
+                  <span class="legend-dot green"></span>
+                  <span>Low risk (85–100)</span>
+                </div>
+                <div class="legend-row">
+                  <span class="legend-dot amber"></span>
+                  <span>Needs review (70–84)</span>
+                </div>
+                <div class="legend-row">
+                  <span class="legend-dot red"></span>
+                  <span>High risk (&lt;70)</span>
+                </div>
+                <div style="margin-top:8px;">
+                  <span id="statusPill" class="status-pill">Needs review – some issues</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="flex:0.9;">
+            <div class="section-title">How this draft is performing</div>
+            <div class="badges" id="summaryBadges"></div>
+          </div>
+        </div>
+        <div style="margin-top:12px;">
+          <div class="section-title">Score breakdown</div>
+          <div class="breakdown-grid" id="breakdownGrid"></div>
+        </div>
+      </div>
+
+      <!-- Right: Detailed analysis -->
+      <div>
+        <div class="card detail-card">
+          <div class="detail-header">
+            <div>
+              <div class="detail-title">Detailed analysis</div>
+              <div class="detail-meta">
+                <span id="detailCount"></span>
+                <span id="detailSub">Patterns most likely to trigger MLR or FDA questions.</span>
+              </div>
+            </div>
+          </div>
+          <div id="issuesWrap"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recommendations + Chat -->
+    <div class="layout" style="margin-top:12px;">
+      <div>
+        <div class="card recs-card">
+          <div class="section-title">Suggested revisions</div>
+          <div class="recs-intro">Use these as starting points – final language should be aligned with brand voice and legal sign-off.</div>
+          <div id="recsWrap"></div>
+        </div>
+      </div>
+      <div>
+        <div class="card chat-card">
+          <div class="chat-header">
+            <div>
+              <div class="chat-title">Explain these results</div>
+              <div class="chat-tagline">Ask follow-up questions in plain English – the assistant will answer in compliant language.</div>
+            </div>
+          </div>
+          <div class="chat-box">
+            <div class="chat-log" id="chatLog">
+              <div class="chat-msg system">
+                <div class="who">Assistant</div>
+                <div class="body">
+                  I’ve reviewed this draft against FDA rules and Alcon Medical/Legal/Regulatory guidance. I’ll highlight where the language feels too absolute, unbalanced, or promotional and suggest safer alternatives.
+                </div>
+              </div>
+              <div class="chat-msg user">
+                <div class="who">User</div>
+                <div class="body">
+                  Why is “perfect vision” such a big issue here?
+                </div>
+              </div>
+              <div class="chat-msg system">
+                <div class="who">Assistant</div>
+                <div class="body">
+                  “Perfect vision” is treated as a guarantee of outcome. FDA and internal Medical/Legal/Regulatory teams expect us to describe typical results with appropriate qualifiers (for example, “many patients experience clearer vision” or “vision results may vary”). Absolute promises create a high-risk signal for both regulators and reviewers because they don’t reflect individual variability, residual refractive error, or patient-specific factors.
+                </div>
+              </div>
+            </div>
+            <div class="chat-input-row">
+              <input id="chatInput" class="chat-input" placeholder="Ask why something was flagged, or request a safer re-write…" />
+              <button id="chatSend" class="chat-btn">Ask</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div class="footer-left">
+        <span>Prototype · Not a substitute for full MLR review</span>
+      </div>
+      <div class="footer-right">
+        <button class="btn-link" id="viewInput">View submitted copy</button>
+        <button class="btn-primary" id="exportBtn">Export PDF summary</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Utility
+function el(tag, attrs={}, ...children){
+  const node=document.createElement(tag);
+  for(const [k,v] of Object.entries(attrs||{})){
+    if(k==='class') node.className=v;
+    else if(k==='html') node.innerHTML=v;
+    else node.setAttribute(k,v);
+  }
+  for(const c of children){
+    if(c==null) continue;
+    if(typeof c==='string') node.appendChild(document.createTextNode(c));
+    else node.appendChild(c);
+  }
+  return node;
+}
+
+// Sample data (unchanged logic)
+const score=81;
+const breakdown=[
+  {id:'claims', label:'Clinical & outcome claims', score:72, severity:'high', summary:'Some phrases over-promise outcomes without variability or context.'},
+  {id:'risk', label:'Risk / safety balance', score:78, severity:'high', summary:'Risk language is present but not always in proximity to strong benefit claims.'},
+  {id:'fair', label:'Fair balance & clarity', score:86, severity:'moderate', summary:'Most copy is clear, but a few phrases could overemphasize benefits.'},
+  {id:'clarity', label:'Clarity & readability', score:90, severity:'moderate', summary:'Overall tone is professional and easy to follow.'}
+];
+
+const issues=[
+  {
+    id:'perfect',
+    severity:'high',
+    title:'Overstated outcome ("perfect vision")',
+    quotes:['perfect vision'],
+    citations:[
+      'FDA: 21 CFR 202.1(e)(5) – claims cannot be false or misleading; require fair balance',
+      'MLR: Alcon MLR guidance – avoid absolute outcome language; include risk and variability'
+    ]
+  },
+  {
+    id:'guarantee',
+    severity:'high',
+    title:'Outcome guarantees without variability',
+    quotes:['will completely eliminate your need for glasses'],
+    citations:[
+      'FDA: 21 CFR 202.1(e)(7)(viii) – avoid representations that a drug is better than another without substantial evidence',
+      'MLR: Alcon MLR guidance – no guaranteed results; qualify real-world variability'
+    ]
+  },
+  {
+    id:'risk-balance',
+    severity:'moderate',
+    title:'Benefit statements separated from risk information',
+    quotes:['enjoy clear, crisp vision all day long'],
+    citations:[
+      'FDA: 21 CFR 202.1(e)(5)(ii) – fair balance between risk and benefit information',
+      'MLR: Alcon MLR guidance – place key safety language near strongest benefit claims'
+    ]
+  }
+];
+
+const recs=[
+  {
+    label:'Safer wording for “perfect vision”',
+    copy:'Consider softening this to “clearer vision for many patients” or “improved vision for appropriate candidates,” and add a short reminder that individual results may vary.',
+    meta:'Addresses: “perfect vision” outcome claim'
+  },
+  {
+    label:'Avoid promising glasses-free outcomes',
+    copy:'Instead of “will completely eliminate your need for glasses,” use language like “may reduce your dependence on glasses or contacts” and reinforce that some patients may still need correction for certain tasks.',
+    meta:'Addresses: guaranteed glasses-free statement'
+  },
+  {
+    label:'Tighten risk / benefit proximity',
+    copy:'After strong benefit statements (for example, “enjoy clear, crisp vision all day long”), add a brief safety reminder such as “results and recovery experiences vary by patient; see Important Safety Information for risks and considerations.”',
+    meta:'Addresses: separation of strongest benefit from risk information'
+  }
+];
+
+// Render functions
+function renderScore(){
+  const donutArc=document.getElementById('donutArc');
+  const num=document.getElementById('scoreNum');
+  num.textContent=score;
+  const pct=Math.max(0,Math.min(100,score));
+  donutArc.style.strokeDasharray='100';
+  donutArc.style.strokeDashoffset=100-pct;
+
+  const status=document.getElementById('statusPill');
+  if(score>=85){
+    status.textContent='Low risk – compliant';
+    status.classList.remove('high');
+    status.classList.add('low');
+    donutArc.style.stroke='#16A34A';
+  }else if(score>=70){
+    status.textContent='Needs review – some issues';
+    status.classList.remove('high','low');
+    donutArc.style.stroke='#F97316';
+  }else{
+    status.textContent='High risk – significant issues';
+    status.classList.remove('low');
+    status.classList.add('high');
+    donutArc.style.stroke='#DC2626';
+  }
+}
+
+function renderBadges(){
+  const wrap=document.getElementById('summaryBadges');
+  const meta=[
+    {label:'Outcome language', level:'amber', text:'Some language feels absolute or guaranteed.'},
+    {label:'Risk balance', level:'amber', text:'Risk information could sit closer to strongest claims.'},
+    {label:'Tone & clarity', level:'green', text:'Professional tone appropriate for HCP-facing materials.'}
+  ];
+  meta.forEach(m=>{
+    const b=el('div',{class:'badge'},
+      el('span',{class:'badge-dot '+(m.level==='green'?'green':m.level==='red'?'red':'amber')}),
+      el('span',{},m.label)
+    );
+    wrap.appendChild(b);
+  });
+}
+
+function renderBreakdown(){
+  const grid=document.getElementById('breakdownGrid'); grid.innerHTML='';
+  breakdown.forEach(row=>{
+    const card=el('div',{class:'break-card'});
+    const head=el('div',{class:'break-header'});
+    head.append(
+      el('div',{class:'break-title'},row.label),
+      el('div',{},
+        el('div',{class:'break-score'},String(row.score)),
+        el('div',{class:'break-pill '+(row.score<70?'high':row.score<85?'mid':'low')},
+          row.score<70?'High risk':row.score<85?'Needs review':'Low risk'
+        )
+      )
+    );
+    card.appendChild(head);
+    card.appendChild(el('div',{class:'break-body'},row.summary));
+    grid.appendChild(card);
+  });
+}
+
+// FINAL renderIssues with all your requested behavior
+function renderIssues(issues){
+  const wrap=document.getElementById('issuesWrap'); 
+  wrap.innerHTML='';
+  const sub=document.getElementById('detailSub');
+  const countEl=document.getElementById('detailCount');
+
+  if(!issues.length){
+    sub.textContent = 'No high-risk patterns were detected in this content.';
+    countEl.textContent = '';
+    return;
+  }
+
+  sub.textContent='';
+  countEl.textContent = `• ${issues.length} issue${issues.length>1?'s':''}`;
+
+  issues.forEach(issue=>{
+    const box = el('div',{class:'issue'});
+
+    // --- Severity bubble line (row 1) ---
+    const head = el('div',{class:'issue-head'});
+    let effSeverity = issue.severity || 'high';
+
+    // Escalate certain rules (e.g., guarantees, perfect vision) to critical visually
+    if(issue.id === 'guarantee' || issue.id === 'perfect'){
+      effSeverity = 'critical';
+    }
+
+    let severityLabel;
+    if(effSeverity === 'critical'){ severityLabel='High risk'; }
+    else if(effSeverity === 'high'){ severityLabel='Needs review'; }
+    else { severityLabel='Strong'; }
+
+    const sev = el('span',{class:`sev ${effSeverity}`}, severityLabel);
+    head.append(sev);
+    box.append(head);
+
+    // --- Flagged phrases (row 2+) as numbered, BOLD & LARGER list ---
+    if(issue.quotes && issue.quotes.length){
+      const list = el('ol',{class:'quote-list'});
+      issue.quotes.forEach(q=>{
+        const li = el('li',{class:'flagged-phrase'});
+        li.append(el('strong',{},'“'+q+'”'));
+        list.append(li);
+      });
+      box.append(list);
+    }
+
+    // --- Explanation: Issue type only (no repeated phrase) ---
+    if(issue.title){
+      const cleanTitle = issue.title.replace(/\(.*?\)/g,'').trim();
+      const expl = el('div',{class:'issue-expl'}, 'Issue: ' + cleanTitle);
+      box.append(expl);
+    }
+
+    // --- Citations as clean bullets, with Medical / Legal / Regulatory split ---
+    if(issue.citations && issue.citations.length){
+      const cites = el('div',{class:'citations'});
+      const label = el('strong',{},'Citations:');
+      const ul = el('ul');
+
+      issue.citations.forEach(c=>{
+        if(!c){ return; }
+        let txt = c;
+
+        if(txt.startsWith('MLR:')){
+          let raw = txt.replace('MLR:','').trim();
+          // strip "Alcon MLR guidance –" or similar
+          raw = raw.replace(/^.*?–\s*/,''); 
+
+          const parts = raw.split(';');
+          if(parts.length > 1){
+            const first = parts[0].trim();   
+            const second = parts.slice(1).join(';').trim();
+
+            if(first){
+              ul.append(el('li',{},'Legal: '+first));
+            }
+            if(second){
+              ul.append(el('li',{},'Medical: '+second));
+            }
+          } else {
+            if(raw){
+              ul.append(el('li',{},'Regulatory: '+raw));
+            }
+          }
+        } else {
+          ul.append(el('li',{},txt));
+        }
+      });
+
+      cites.append(label, ul);
+      box.append(cites);
+    }
+
+    wrap.append(box);
+  });
+}
+
+function renderRecs(){
+  const wrap=document.getElementById('recsWrap'); wrap.innerHTML='';
+  recs.forEach(r=>{
+    const card=el('div',{class:'rec-item'});
+    card.append(
+      el('div',{class:'rec-label'},r.label),
+      el('div',{class:'rec-copy'},r.copy),
+      el('div',{class:'rec-meta'},r.meta)
+    );
+    wrap.append(card);
+  });
+}
+
+// Chat mock (front-end only)
+function appendChat(who,text){
+  const log=document.getElementById('chatLog');
+  const msg=el('div',{class:'chat-msg '+(who==='User'?'user':'system')},
+    el('div',{class:'who'},who),
+    el('div',{class:'body'},text)
+  );
+  log.appendChild(msg);
+  log.scrollTop=log.scrollHeight;
+}
+
+function setupChat(){
+  const input=document.getElementById('chatInput');
+  const btn=document.getElementById('chatSend');
+  btn.addEventListener('click',()=>{
+    const v=input.value.trim();
+    if(!v) return;
+    appendChat('User',v);
+    input.value='';
+    setTimeout(()=>{
+      appendChat('Assistant','Thanks for the question – in a live version, this assistant would explain how the flagged pattern maps to FDA rules and Alcon Medical/Legal/Regulatory guidance, and suggest compliant alternative wording.');
+    },450);
+  });
+}
+
+document.getElementById('exportBtn').addEventListener('click',()=>{
+  alert('Export to PDF would be wired here in production (e.g., html2pdf or server-side render).');
+});
+
+document.getElementById('viewInput').addEventListener('click',()=>{
+  alert('This would open a side panel or modal with the original copy that was scored.');
+});
+
+function init(){
+  renderScore();
+  renderBadges();
+  renderBreakdown();
+  renderIssues(issues);
+  renderRecs();
+  setupChat();
+  document.getElementById('runTime').textContent=new Date().toLocaleString();
+}
+
+init();
+</script>
+</body>
+</html>
