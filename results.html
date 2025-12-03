@@ -379,9 +379,9 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetic
             <div class="donut" id="donut"><div class="ring"></div><div class="num" id="scoreNum">—</div></div>
             <div>
               <div class="legend">
-                <div class="legend-item"><span class="dot green"></span> Strong (85–100)</div>
-                <div class="legend-item"><span class="dot amber"></span> Needs review (70–84)</div>
-                <div class="legend-item"><span class="dot red"></span> High risk (&lt;70)</div>
+                <div class="legend-item"><span class="dot green"></span> Low Risk (85–100)</div>
+                <div class="legend-item"><span class="dot amber"></span> Needs Review (70–84)</div>
+                <div class="legend-item"><span class="dot red"></span> High Risk (&lt;70)</div>
               </div>
               <div id="statusBubble" class="bubble amber">Status: …</div>
             </div>
@@ -941,9 +941,10 @@ const statusBubble=document.getElementById('statusBubble');
 function renderDonut(pct){
   scoreNum.textContent=pct;
   donut.style.setProperty('--deg',(pct*3.6)+'deg');
-  if(pct>=85){ donut.style.setProperty('--color','var(--green)'); statusBubble.className='bubble green'; statusBubble.textContent='Strong – compliant'; }
-  else if(pct>=70){ donut.style.setProperty('--color','var(--amber)'); statusBubble.className='bubble amber'; statusBubble.textContent='Needs review – some issues'; }
-  else { donut.style.setProperty('--color','var(--red)'); statusBubble.className='bubble red'; statusBubble.textContent='High risk – multiple critical issues'; }
+  if(pct>=85){ donut.style.setProperty('--color','var(--green)'); statusBubble.className='bubble green'; statusBubble.textContent=' Low Risk – compliant'; }
+
+  else if(pct>=70){ donut.style.setProperty('--color','var(--amber)'); statusBubble.className='bubble amber'; statusBubble.textContent='Needs Review – some issues'; }
+  else { donut.style.setProperty('--color','var(--red)'); statusBubble.className='bubble red'; statusBubble.textContent='High Risk – multiple critical issues'; }
 }
 function el(tag,attrs={},html=''){ const n=document.createElement(tag); Object.entries(attrs).forEach(([k,v])=>{ if(k==='class') n.className=v; else n.setAttribute(k,v); }); if(html) n.innerHTML=html; return n; }
 
@@ -976,9 +977,9 @@ function renderIssues(issues){
     }
 
     let severityLabel;
-    if(effSeverity === 'critical'){ severityLabel='High risk'; }
-    else if(effSeverity === 'high'){ severityLabel='Needs review'; }
-    else { severityLabel='Strong'; }
+    if(effSeverity === 'critical'){ severityLabel='High Risk'; }
+    else if(effSeverity === 'high'){ severityLabel='Needs Review'; }
+    else { severityLabel='Low Risk'; }
 
     const sev = el('span',{class:`sev ${effSeverity}`}, severityLabel);
     head.append(sev);
